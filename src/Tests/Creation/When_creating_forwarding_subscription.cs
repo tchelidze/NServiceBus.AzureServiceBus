@@ -1,14 +1,14 @@
 ﻿namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
 {
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
     using AzureServiceBus;
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
+    using NUnit.Framework;
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
     using TestUtils;
     using Transport.AzureServiceBus;
-    using NUnit.Framework;
 
     [TestFixture]
     [Category("AzureServiceBus")]
@@ -28,7 +28,7 @@
         [OneTimeSetUp]
         public void TopicSetup()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             if (!namespaceManager.TopicExists(topicPath).GetAwaiter().GetResult())
             {
                 namespaceManager.CreateTopic(new TopicDescription(topicPath)).GetAwaiter().GetResult();
@@ -38,7 +38,7 @@
                 namespaceManager.CreateQueue(new QueueDescription(forwardToQueue)).GetAwaiter().GetResult();
             }
 
-            namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Fallback));
+            namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Fallback), AzureServiceBusConnectionString.Fallback);
             if (!namespaceManager.TopicExists(topicPath).GetAwaiter().GetResult())
             {
                 namespaceManager.CreateTopic(new TopicDescription(topicPath)).GetAwaiter().GetResult();
@@ -52,11 +52,11 @@
         [OneTimeTearDown]
         public void TopicCleanUp()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             namespaceManager.DeleteTopic(topicPath).GetAwaiter().GetResult();
             namespaceManager.DeleteQueue(forwardToQueue).GetAwaiter().GetResult();
 
-            namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             namespaceManager.DeleteTopic(topicPath).GetAwaiter().GetResult();
             namespaceManager.DeleteQueue(forwardToQueue).GetAwaiter().GetResult();
         }
@@ -64,7 +64,7 @@
         [Test]
         public async Task Should_properly_set_use_subscription_description_defaults_if_user_does_not_provide_topic_description_values()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var creator = new AzureServiceBusForwardingSubscriptionCreator(new TopologySubscriptionSettings());
             const string subscriptionName = "endpoint1";
@@ -91,7 +91,7 @@
         {
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             const string subscriptionName = "endpoint2";
 
@@ -114,7 +114,7 @@
         [Test]
         public async Task Should_properly_set_AutoDeleteOnIdle_on_the_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
@@ -141,7 +141,7 @@
         [Test]
         public async Task Should_properly_set_DefaultMessageTimeToLive_on_the_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
@@ -164,7 +164,7 @@
         [Test]
         public async Task Should_properly_set_EnableBatchedOperations_on_the_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
@@ -186,7 +186,7 @@
         [Test]
         public async Task Should_properly_set_EnableDeadLetteringOnFilterEvaluationExceptions_on_the_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
@@ -208,7 +208,7 @@
         [Test]
         public async Task Should_properly_set_EnableDeadLetteringOnMessageExpiration_on_the_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
@@ -230,7 +230,7 @@
         [Test]
         public async Task Should_properly_set_LockDuration_on_the_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
@@ -253,7 +253,7 @@
         [Test]
         public async Task Should_set_forwarding_to_an_explicitly_provided_forwardto()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var queueCreator = new AzureServiceBusQueueCreator(new TopologyQueueSettings(), DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer()));
             var queueToForwardTo = await queueCreator.Create("forwardto", namespaceManager);
@@ -275,7 +275,7 @@
         [Test]
         public async Task Should_properly_set_ForwardDeadLetteredMessagesTo_on_the_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var topicCreator = new AzureServiceBusTopicCreator(new TopologyTopicSettings());
             var topicToForwardTo = await topicCreator.Create("topic2forward2", namespaceManager);
@@ -302,7 +302,7 @@
         [Test]
         public async Task Should_properly_set_ForwardDeadLetteredMessagesTo_on_the_created_entity_that_qualifies_the_condition()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var topicCreator = new AzureServiceBusTopicCreator(new TopologyTopicSettings());
             var notUsedEntity = await topicCreator.Create("topic2forward2", namespaceManager);
@@ -335,7 +335,7 @@
                                 + " OR [NServiceBus.EnclosedMessageTypes] LIKE '%Test.SomeEvent'"
                                 + " OR [NServiceBus.EnclosedMessageTypes] = 'Test.SomeEvent'";
 
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
 
             var creator = new AzureServiceBusForwardingSubscriptionCreator(new TopologySubscriptionSettings());
@@ -354,7 +354,7 @@
         [Test]
         public async Task Should_be_able_to_update_an_existing_subscription_with_new_property_values()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.CreateSubscription(new SubscriptionDescription(topicPath, "existingendpoint1"), sqlFilter);
 
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
@@ -376,7 +376,7 @@
         [Test]
         public async Task Should_be_able_to_update_an_existing_subscription_with_new_property_values_without_failing_on_readonly_properties()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.CreateSubscription(new SubscriptionDescription(topicPath, "existingendpoint2")
             {
                 EnableDeadLetteringOnFilterEvaluationExceptions = true,
@@ -398,7 +398,7 @@
         [Test]
         public async Task Should_be_idempotent_when_creating_a_subscription()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
@@ -434,7 +434,7 @@
             var settings = DefaultConfigurationValues.Apply(SettingsHolderFactory.BuildWithSerializer());
             var extensions = new TransportExtensions<AzureServiceBusTransport>(settings);
             extensions.UseForwardingTopology().Topics().EnablePartitioning(true);
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             var creator = new AzureServiceBusForwardingSubscriptionCreator(new TopologySubscriptionSettings());
             // add subscription with one rule
@@ -453,8 +453,8 @@
         {
             const string subscriber = "MultipleNamespaceSubscriber";
 
-            var namespaceManager1 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
-            var namespaceManager2 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Fallback));
+            var namespaceManager1 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
+            var namespaceManager2 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Fallback), AzureServiceBusConnectionString.Fallback);
 
             var creator = new AzureServiceBusForwardingSubscriptionCreator(new TopologySubscriptionSettings
             {

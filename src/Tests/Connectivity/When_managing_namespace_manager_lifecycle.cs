@@ -1,13 +1,13 @@
 namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Connectivity
 {
+    using Microsoft.ServiceBus;
+    using Microsoft.ServiceBus.Messaging;
+    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.ServiceBus;
-    using Microsoft.ServiceBus.Messaging;
     using TestUtils;
     using Transport.AzureServiceBus;
-    using NUnit.Framework;
 
     [TestFixture]
     [Category("AzureServiceBus")]
@@ -156,6 +156,11 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Connectivity
             }
 
             public Task DeleteSubscription(SubscriptionDescription subscriptionDescription)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task UpdateRule(string topicPath, string subscriptionName, RuleDescription rule)
             {
                 throw new NotImplementedException();
             }

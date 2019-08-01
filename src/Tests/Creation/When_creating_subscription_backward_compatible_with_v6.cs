@@ -1,14 +1,14 @@
 ﻿namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
 {
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
     using Ns3;
+    using NUnit.Framework;
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
     using TestUtils;
     using Transport.AzureServiceBus;
-    using NUnit.Framework;
 
     [TestFixture]
     [Category("AzureServiceBus")]
@@ -20,7 +20,7 @@
         [OneTimeSetUp]
         public void TopicSetup()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value),AzureServiceBusConnectionString.Value);
             if (!namespaceManager.TopicExists(topicPath).Result)
             {
                 namespaceManager.CreateTopic(new TopicDescription(topicPath)).Wait();
@@ -43,7 +43,7 @@
         [Test]
         public async Task Should_create_a_subscription_based_on_event_type_full_name_for_an_event_name_reused_across_multiple_namespaces()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal( NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value),AzureServiceBusConnectionString.Value);
             await namespaceManager.CreateSubscription(new SubscriptionDescription(topicPath, typeof(Ns1.ReusedEvent).Name), new SqlSubscriptionFilter(typeof(Ns1.ReusedEvent)).Serialize());
 
             var creator = new AzureServiceBusSubscriptionCreatorV6(new TopologySubscriptionSettings());
@@ -73,7 +73,7 @@
         [Test]
         public async Task Should_properly_set_ForwardTo_on_the_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal( NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.CreateSubscription(new SubscriptionDescription(topicPath, typeof(Ns1.ReusedEvent).Name), new SqlSubscriptionFilter(typeof(Ns1.ReusedEvent)).Serialize());
 
             var topicCreator = new AzureServiceBusTopicCreator(new TopologyTopicSettings());
@@ -103,7 +103,7 @@
         [Test]
         public async Task Should_properly_set_ForwardTo_on_the_created_entity_with_hierarchy()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.CreateSubscription(new SubscriptionDescription(hierarchyTopicPath, typeof(Ns1.ReusedEvent).Name), new SqlSubscriptionFilter(typeof(Ns1.ReusedEvent)).Serialize());
 
             var topicCreator = new AzureServiceBusTopicCreator(new TopologyTopicSettings());
@@ -134,7 +134,7 @@
         public async Task Should_not_create_create_a_duplicate_subscription__issue_811()
         {
             var nativeManager = NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value);
-            var namespaceManager = new NamespaceManagerAdapterInternal(nativeManager);
+            var namespaceManager = new NamespaceManagerAdapterInternal(nativeManager,AzureServiceBusConnectionString.Value);
 
             var topicForTest = $"{topicPath}_issue811";
             try
