@@ -1,9 +1,9 @@
 ﻿namespace NServiceBus.Transport.AzureServiceBus
 {
-    using System.Linq;
-    using System.Threading.Tasks;
     using Logging;
     using Microsoft.ServiceBus.Messaging;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     class AzureServiceBusSubscriptionCreatorV6 : ICreateAzureServiceBusSubscriptionsInternal
     {
@@ -18,8 +18,13 @@
 
             if (await SubscriptionIsReusedAcrossDifferentNamespaces(subscriptionDescription, sqlFilter, namespaceManager).ConfigureAwait(false))
             {
-                logger.Debug("Creating subscription using event type full name");
-                subscriptionDescription = await creator.Create(topicPath, metadata.SubscriptionNameBasedOnEventWithNamespace, metadata, sqlFilter, namespaceManager, forwardTo).ConfigureAwait(false);
+                // Instead of adding new subscription, we're going to update the subscription filter instead,
+                // since if there are 2 messages with same and different namespace, we provide merged filter capturing both of them.
+
+                // subscriptionDescription = await creator.Create(topicPath, metadata.SubscriptionNameBasedOnEventWithNamespace, metadata, sqlFilter, namespaceManager, forwardTo).ConfigureAwait(false);
+
+                logger.Debug("Updating the subscription filter.");
+                await creator.UpdateFilter(topicPath, subscriptionName, sqlFilter, namespaceManager).ConfigureAwait(false);
             }
 
             return subscriptionDescription;

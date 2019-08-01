@@ -1,8 +1,8 @@
 namespace NServiceBus.Transport.AzureServiceBus
 {
-    using System;
     using Microsoft.ServiceBus;
     using Settings;
+    using System;
 
     class NamespaceManagerCreator : ICreateNamespaceManagersInternal
     {
@@ -62,7 +62,7 @@ namespace NServiceBus.Transport.AzureServiceBus
                     manager.Settings.RetryPolicy = retryPolicy;
                 }
             }
-            return new NamespaceManagerAdapterInternal(manager);
+            return new NamespaceManagerAdapterInternal(manager, connectionString);
         }
 
         Func<string, NamespaceManagerSettings> settingsFactory;

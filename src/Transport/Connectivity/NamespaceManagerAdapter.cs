@@ -1,16 +1,18 @@
 namespace NServiceBus.Transport.AzureServiceBus
 {
+    using Microsoft.ServiceBus;
+    using Microsoft.ServiceBus.Messaging;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.ServiceBus;
-    using Microsoft.ServiceBus.Messaging;
 
     class NamespaceManagerAdapterInternal : INamespaceManagerInternal
     {
-        public NamespaceManagerAdapterInternal(NamespaceManager manager)
+        public NamespaceManagerAdapterInternal(NamespaceManager manager, string connectionString)
         {
+            this.connectionString = connectionString;
             this.manager = manager;
+
         }
 
         public NamespaceManagerSettings Settings => manager.Settings;
@@ -116,6 +118,30 @@ namespace NServiceBus.Transport.AzureServiceBus
             return manager.GetTopicAsync(path);
         }
 
+        public async Task UpdateRule(string topicPath, string subscriptionName, RuleDescription rule)
+        {
+            var subscriptionClient = SubscriptionClient.CreateFromConnectionString(connectionString, topicPath, subscriptionName);
+
+            // Rule cannot be directly update, but instead should first be deleted and then added.
+            var tempRule = new RuleDescription(Guid.NewGuid().ToString().Replace("-", string.Empty), rule.Filter);
+
+            // In order not to leave a subscription without filter at any given moment, we're going to do the following
+
+            // Add new rule as temp
+            await subscriptionClient.AddRuleAsync(tempRule).ConfigureAwait(false);
+
+            // Remove target rule
+            await subscriptionClient.RemoveRuleAsync(rule.Name).ConfigureAwait(false);
+
+            // Add new rule
+            await subscriptionClient.AddRuleAsync(rule).ConfigureAwait(false);
+
+            // Remove temp rule
+            await subscriptionClient.RemoveRuleAsync(tempRule.Name).ConfigureAwait(false);
+
+            await subscriptionClient.CloseAsync().ConfigureAwait(false);
+        }
+
         public Task DeleteSubscription(SubscriptionDescription subscriptionDescription)
         {
             return manager.DeleteSubscriptionAsync(subscriptionDescription.TopicPath, subscriptionDescription.Name);
@@ -128,5 +154,6 @@ namespace NServiceBus.Transport.AzureServiceBus
         }
 
         NamespaceManager manager;
+        string connectionString;
     }
 }
