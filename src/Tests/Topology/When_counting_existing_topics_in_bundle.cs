@@ -1,11 +1,11 @@
 ﻿namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Topology
 {
-    using System;
-    using System.Threading.Tasks;
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
     using NUnit.Framework;
     using Settings;
+    using System;
+    using System.Threading.Tasks;
     using TestUtils;
     using Transport.AzureServiceBus;
 
@@ -22,7 +22,7 @@
             var bundlePrefix = $"bundle{DateTime.Now.Ticks}-";
             nonBundledTopic = $"{bundlePrefix}x";
 
-            namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
 
             try
             {

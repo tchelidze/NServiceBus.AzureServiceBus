@@ -1,8 +1,5 @@
 namespace NServiceBus.Azure.Transports.WindowsAzureServiceBus.AcceptanceTests.Addressing
 {
-    using System.Collections.Concurrent;
-    using System.Threading;
-    using System.Threading.Tasks;
     using AcceptanceTesting;
     using AcceptanceTesting.Customization;
     using AzureServiceBus;
@@ -11,6 +8,9 @@ namespace NServiceBus.Azure.Transports.WindowsAzureServiceBus.AcceptanceTests.Ad
     using NServiceBus.AcceptanceTests;
     using NServiceBus.AcceptanceTests.EndpointTemplates;
     using NUnit.Framework;
+    using System.Collections.Concurrent;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Transport.AzureServiceBus;
 
     public class When_sending_message_with_custom_partitioning_strategy : NServiceBusAcceptanceTest
@@ -18,7 +18,7 @@ namespace NServiceBus.Azure.Transports.WindowsAzureServiceBus.AcceptanceTests.Ad
         [Test]
         public async Task Should_fail_over_to_available_namespace()
         {
-            var namespaceManager1 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(targetConnectionString));
+            var namespaceManager1 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(targetConnectionString), targetConnectionString);
             await namespaceManager1.DeleteQueue(Conventions.EndpointNamingConvention(typeof(TargetEndpoint)));
 
             var contextWithOnlyNamespace1Available = await Scenario.Define<Context>()
@@ -35,7 +35,7 @@ namespace NServiceBus.Azure.Transports.WindowsAzureServiceBus.AcceptanceTests.Ad
                 .Done(c => c.RequestsReceived == 3 && c.NamespaceNames.Count == 3)
                 .Run();
 
-            var namespaceManager2 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(connectionString));
+            var namespaceManager2 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(connectionString), targetConnectionString);
             await namespaceManager2.DeleteQueue(Conventions.EndpointNamingConvention(typeof(TargetEndpoint)));
 
             var contextWithOnlyNamespace2Available = await Scenario.Define<Context>()

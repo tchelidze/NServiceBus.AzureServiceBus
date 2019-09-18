@@ -1,13 +1,13 @@
 namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
 {
-    using System;
-    using System.Threading.Tasks;
     using FakeItEasy;
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
+    using NUnit.Framework;
+    using System;
+    using System.Threading.Tasks;
     using TestUtils;
     using Transport.AzureServiceBus;
-    using NUnit.Framework;
 
     [TestFixture]
     [Category("AzureServiceBus")]
@@ -16,7 +16,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
         [Test]
         public async Task Should_use_topic_description_defaults_if_user_does_not_provide_topic_description_values()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             const string topicPath = "mytopic2";
             await namespaceManager.DeleteTopic(topicPath);
 
@@ -40,7 +40,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
         public async Task Should_use_topic_description_provided_by_user()
         {
             const string topicPath = "mytopic3";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             var userProvidedTopicDescriptionWasUsed = false;
@@ -69,7 +69,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
             var creator = new AzureServiceBusTopicCreator(topologyTopicSettings);
 
             const string topicPath = "mytopic4";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -89,7 +89,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
 
             var creator = new AzureServiceBusTopicCreator(topologyTopicSettings);
             const string topicPath = "mytopic5";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -110,7 +110,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
             };
             var creator = new AzureServiceBusTopicCreator(topologyTopicSettings);
             const string topicPath = "mytopic6";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -129,7 +129,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
             };
             var creator = new AzureServiceBusTopicCreator(topologyTopicSettings);
             const string topicPath = "mytopic7";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -148,7 +148,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
             };
             var creator = new AzureServiceBusTopicCreator(topologyTopicSettings);
             const string topicPath = "mytopic8";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -161,7 +161,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
         [Test]
         public async Task Should_set_EnablePartitioning_on_created_entity()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             const string topicPath = "mytopic9";
 
             //clean up before test starts
@@ -189,7 +189,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
             };
             var creator = new AzureServiceBusTopicCreator(topologyTopicSettings);
             const string topicPath = "mytopic10";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -208,7 +208,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
             };
             var creator = new AzureServiceBusTopicCreator(topologyTopicSettings);
             const string topicPath = "mytopic11";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -227,7 +227,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
             };
             var creator = new AzureServiceBusTopicCreator(topologyTopicSettings);
             const string topicPath = "mytopic12";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -242,7 +242,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
         {
             var creator = new AzureServiceBusTopicCreator(new TopologyTopicSettings());
             const string topicPath = "mytopic13";
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic(topicPath);
 
             await creator.Create(topicPath, namespaceManager);
@@ -320,7 +320,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
         [Test]
         public async Task Should_be_able_to_update_an_existing_topic_with_new_property_values()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic("existingtopic1");
 
             await namespaceManager.CreateTopic(new TopicDescription("existingtopic1"));
@@ -340,7 +340,7 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
         [Test]
         public async Task Should_be_able_to_update_an_existing_topic_with_new_property_values_without_failing_on_readonly_properties()
         {
-            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
+            var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
             await namespaceManager.DeleteTopic("existingtopic2");
             await namespaceManager.CreateTopic(new TopicDescription("existingtopic2")
             {
@@ -374,8 +374,8 @@ namespace NServiceBus.Azure.WindowsAzureServiceBus.Tests.Creation
         [Test]
         public async Task Should_create_topic_on_multiple_namespaces()
         {
-            var namespaceManager1 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value));
-            var namespaceManager2 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Fallback));
+            var namespaceManager1 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Value), AzureServiceBusConnectionString.Value);
+            var namespaceManager2 = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(AzureServiceBusConnectionString.Fallback), AzureServiceBusConnectionString.Fallback);
             const string topicPath = "topic-caching-key";
             await namespaceManager1.DeleteTopic(topicPath);
             await namespaceManager2.DeleteTopic(topicPath);

@@ -1,10 +1,10 @@
 namespace NServiceBus.Transport.AzureServiceBus
 {
+    using Microsoft.ServiceBus;
+    using Microsoft.ServiceBus.Messaging;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.ServiceBus;
-    using Microsoft.ServiceBus.Messaging;
 
     interface INamespaceManagerInternal
     {
@@ -35,5 +35,7 @@ namespace NServiceBus.Transport.AzureServiceBus
         Task<IEnumerable<TopicDescription>> GetTopics(string filter);
 
         Task DeleteSubscription(SubscriptionDescription subscriptionDescription);
+
+        Task UpdateRule(string topicPath, string subscriptionName, RuleDescription rule);
     }
 }

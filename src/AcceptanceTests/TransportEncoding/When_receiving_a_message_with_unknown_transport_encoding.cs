@@ -1,18 +1,18 @@
 ﻿namespace NServiceBus.Azure.Transports.WindowsAzureServiceBus.AcceptanceTests.TransportEncoding
 {
-    using System;
-    using System.Threading.Tasks;
-    using Microsoft.ServiceBus;
-    using Microsoft.ServiceBus.Messaging;
     using AcceptanceTesting;
     using AcceptanceTesting.Customization;
     using AcceptanceTesting.Support;
     using AzureServiceBus.AcceptanceTests.Infrastructure;
+    using MessageMutator;
+    using Microsoft.ServiceBus;
+    using Microsoft.ServiceBus.Messaging;
     using NServiceBus.AcceptanceTests;
     using NServiceBus.AcceptanceTests.EndpointTemplates;
-    using Transport.AzureServiceBus;
-    using MessageMutator;
     using NUnit.Framework;
+    using System;
+    using System.Threading.Tasks;
+    using Transport.AzureServiceBus;
 
     public class When_receiving_a_message_with_unknown_transport_encoding : NServiceBusAcceptanceTest
     {
@@ -43,7 +43,7 @@
                 await Task.Delay(TimeSpan.FromSeconds(10));
 
                 var connectionString = TestUtility.DefaultConnectionString;
-                var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(connectionString));
+                var namespaceManager = new NamespaceManagerAdapterInternal(NamespaceManager.CreateFromConnectionString(connectionString), connectionString);
                 var factory = MessagingFactory.CreateAsync(namespaceManager.Address, namespaceManager.Settings.TokenProvider).GetAwaiter().GetResult();
                 var dlqPath = Conventions.EndpointNamingConvention(typeof(Receiver)) + "/$DeadLetterQueue";
                 var receiver = await factory.CreateMessageReceiverAsync(dlqPath, ReceiveMode.ReceiveAndDelete).ConfigureAwait(false);

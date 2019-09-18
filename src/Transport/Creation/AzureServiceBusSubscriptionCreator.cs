@@ -1,11 +1,11 @@
 ﻿namespace NServiceBus.Transport.AzureServiceBus
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Threading.Tasks;
     using Logging;
     using Microsoft.ServiceBus.Messaging;
     using NServiceBus.AzureServiceBus;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Threading.Tasks;
 
     class AzureServiceBusSubscriptionCreator
     {
@@ -15,6 +15,9 @@
         {
             this.subscriptionSettings = subscriptionSettings;
         }
+
+        public Task UpdateFilter(string topicPath, string subscriptionName, string sqlFilter, INamespaceManagerInternal namespaceManager) =>
+            namespaceManager.UpdateRule(topicPath,subscriptionName, new RuleDescription("$Default", new SqlFilter(sqlFilter)));
 
         public async Task<SubscriptionDescription> Create(string topicPath, string subscriptionName, SubscriptionMetadataInternal metadata, string sqlFilter, INamespaceManagerInternal namespaceManager, string forwardTo = null)
         {
